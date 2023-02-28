@@ -1,0 +1,39 @@
+import numpy as np
+import pandas as pd
+import warnings
+import math
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+from statsmodels.tsa.stattools import adfuller
+from scipy.stats import skew, kurtosis
+from scipy.stats import jarque_bera
+
+#data Setting
+csv = pd.read_csv("/Users/jakesaysho/Desktop/DB/KDCI EXCEL/KDCI.csv")
+csv['Date'] = pd.to_datetime(csv['Date'], format='%Y-%m-%d')
+csv = csv.set_index(csv['Date'],drop=True).sort_index()
+
+diff = csv['KDCI'] - csv['KDCI'].shift(1)
+KDCI_return = diff.div(csv['KDCI'].shift(1))
+log_return = np.log(KDCI_return+1)
+csv['per_return'] = log_return*100
+csv['per_return'] = csv['per_return'].fillna(0)
+csv['log_return'] = log_return.fillna(0)
+
+#Half
+
+KDCI_2018 = csv[csv["Date"].between('2018-01-01','2018-12-31')]
+KDCI_2019 = csv[csv["Date"].between('2019-01-01','2019-12-31')]
+KDCI_2020 = csv[csv["Date"].between('2020-01-01','2020-12-31')]
+KDCI_2021 = csv[csv["Date"].between('2021-01-01','2021-12-31')]
+KDCI_2022 = csv[csv["Date"].between('2022-01-01','2022-12-31')]
+KDCI_Op_1 = csv[csv["Date"].between('2017-01-01','2022-12-31')]
+KDCI_Op_2 = csv[csv["Date"].between('2020-01-01','2022-12-31')]
+
+#KOSPI
+KOSPI = pd.read_csv("/Users/jakesaysho/Desktop/DB/KDCI EXCEL/KS11.csv")
+KOSPI['Date'] = pd.to_datetime(KOSPI['Date'], format='%Y-%m-%d')
+KOSPI = KOSPI.set_index(KOSPI['Date'],drop=True).sort_index()
+
+#Interest_rate
+inter = 0.0487193
